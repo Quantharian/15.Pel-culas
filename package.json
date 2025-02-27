@@ -1,12 +1,12 @@
 {
-    "name": "15.peliculas",
+    "name": "15.films",
     "version": "1.0.0",
     "main": "index.js",
     "type": "module",
     "scripts": {
         "start": "node dist/index.js",
-        "start:dev": "cross-env NODE_ENV=dev DEBUG=peliculas* REPO=prisma node --watch --env-file=.env ./dist/index.js",
-        "config:animals": "cross-env NODE_ENV=dev DEBUG=peliculas* REPO=mysql node --env-file=.env ./dist/config.js",
+        "start:dev": "cross-env NODE_ENV=dev DEBUG=films* node --watch --env-file=.env ./dist/index.js",
+        "config": "cross-env NODE_ENV=dev DEBUG=films* node --env-file=.env ./dist/config.js",
         "build": "tsc -w",
         "test": "vitest run",
         "test:c": "vitest run --coverage",
@@ -26,7 +26,6 @@
         "@types/debug": "^4.1.12",
         "@types/express": "^5.0.0",
         "@types/morgan": "^1.9.9",
-        "@types/mysql": "^2.15.26",
         "@types/node": "^22.13.5",
         "eslint": "^9.21.0",
         "globals": "^16.0.0",
