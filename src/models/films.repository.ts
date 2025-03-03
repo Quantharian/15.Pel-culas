@@ -3,17 +3,13 @@ import type { Repository } from './repository.type.js';
 import { PrismaClient } from '@prisma/client';
 import { Film } from '@prisma/client';
 
-const debug = createDebug('demo:repository:films');
+const debug = createDebug('films:repository:films');
 
 export class FilmRepo implements Repository<Film> {
     prisma: PrismaClient;
     constructor() {
         debug('Instanciando repo for films');
         this.prisma = new PrismaClient();
-    }
-
-    private filmRowToFilm(row: unknown): Film {
-        return row as Film;
     }
 
     async read(): Promise<Film[]> {

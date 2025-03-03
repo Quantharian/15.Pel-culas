@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
 import createDebug from 'debug';
 import { resolve } from 'path';
 import morgan from 'morgan';
@@ -9,13 +9,12 @@ import {
     notFoundController,
     notMethodController,
 } from './controllers/base.controller.js';
-
 import { errorManager } from './controllers/errors.controller.js';
-import { Film } from '@prisma/client';
-import { FilmRepo } from './models/films.repository.js';
-import { Repository } from './models/repository.type.js';
-import { AppResponse } from './types/app-response.js';
+import { createFilmsRouter } from './router/films.router.js';
 import { FilmsController } from './controllers/films.controller.js';
+import { FilmRepo } from './models/films.repository.js';
+import { Film } from '@prisma/client';
+import { Repository } from './models/repository.type.js';
 
 // import { createProductsRouter } from './routers/products.router.js';
 // import { HomePage } from './views/pages/home-page.js';
@@ -47,36 +46,17 @@ export const createApp = () => {
     // Routes
 
     const repoFilms: Repository<Film> = new FilmRepo();
-    const filmsController = new FilmsController();
+    const filmsController = new FilmsController(repoFilms);
+    const filmsRouter = createFilmsRouter(filmsController);
+    app.use('/api/films', filmsRouter);
 
-    // const filmsController = new FilmsController(filmModel);
-    // app.use('/api/films', createFilmsRouter(filmsController));
+    // app.use('/apì/films', createFilmssRouter(filmsController));
+    //createFilmssRouter(filmsController));
 
-    app.get('/api/films', filmsController.c1);
-    app.get('/api/films/:id', async (req: Request, res: Response) => {
-        const { id } = req.params;
-        const film = await repoFilms.readById(id);
-        const data: AppResponse<Film> = { results: [film], error: '' };
-        res.json(data);
-    });
-    app.post('/api/films', 
-    });
-    app.patch('/api/films/:id', async (req: Request, res: Response) => {
-        const { id } = req.params;
-        const newData = req.body;
-        const film = await repoFilms.update(id, newData);
-        const data: AppResponse<Film> = { results: [film], error: '' };
-        res.json(data);
-    });
-    app.delete('/api/films/:id', async (req: Request, res: Response) => {
-        const { id } = req.params;
-        const film = await repoFilms.delete(id);
-        const data: AppResponse<Film> = { results: [film], error: '' };
-        res.json(data);
-    });
+    app.use('/apì/films', filmsRouter);
 
-    app.get('*', notFoundController);
-    app.use('*', notMethodController);
+    app.get('*', notFoundController); // 404
+    app.use('*', notMethodController); // 405
 
     app.use(errorManager);
 
