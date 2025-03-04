@@ -15,6 +15,7 @@ export class FilmsController {
         const data: AppResponse<Film> = {
             results,
             error: '',
+            a,
         };
         return data;
     }

@@ -6,6 +6,7 @@ import {
     PrismaClientKnownRequestError,
     PrismaClientValidationError,
 } from '@prisma/client/runtime/library.js';
+import { ZodError } from 'zod';
 // import { ErrorPage } from '../views/pages/error-page.js';
 
 const debug = createDebug('films:errorManager');
@@ -34,10 +35,19 @@ export const errorManager = (
             status: 'Bad Request',
         };
     } else if (!('status' in err)) {
+        console.error(err);
         err = {
             ...err,
             statusCode: 500,
             status: 'Internal Server Error',
+        };
+    } else if (err instanceof ZodError) {
+        err = {
+            ...err,
+            cause: 'Zod validation error',
+            message: err.message || '',
+            statusCode: 400,
+            status: 'Bad Request',
         };
     }
 
