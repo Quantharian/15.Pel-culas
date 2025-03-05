@@ -34,20 +34,21 @@ export const errorManager = (
             statusCode: 400,
             status: 'Bad Request',
         };
-    } else if (!('status' in err)) {
-        console.error(err);
-        err = {
-            ...err,
-            statusCode: 500,
-            status: 'Internal Server Error',
-        };
     } else if (err instanceof ZodError) {
+        debug(err);
         err = {
             ...err,
             cause: 'Zod validation error',
             message: err.message || '',
             statusCode: 400,
             status: 'Bad Request',
+        };
+    } else if (!('status' in err)) {
+        console.error(err);
+        err = {
+            ...err,
+            statusCode: 500,
+            status: 'Internal Server Error',
         };
     }
 

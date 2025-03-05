@@ -5,6 +5,7 @@ import { UsersRepo, UserWithoutPasswd } from '../models/users.repository.js';
 import { AuthService } from '../services/auth.services.js';
 import { HttpError } from '../types/http-error.js';
 import { UserCreateDTO, UserLoginDTO } from '../dto/users.dto.js';
+import { ZodError } from 'zod';
 const debug = createDebug('films:controllers:users');
 
 export class UsersController {
@@ -20,7 +21,7 @@ export class UsersController {
         return data;
     }
 
-    create = async (req: Request, res: Response, next: NextFunction) => {
+    async create(req: Request, res: Response, next: NextFunction) {
         debug('create');
         try {
             const newData = req.body;
@@ -31,7 +32,7 @@ export class UsersController {
         } catch (error) {
             next(error);
         }
-    };
+    }
 
     async login(req: Request, res: Response, next: NextFunction) {
         const error = new HttpError(
@@ -43,13 +44,16 @@ export class UsersController {
         try {
             const { email, password: clientPassword } = req.body;
 
-            if (!email || !clientPassword) {
-                throw error;
-            }
+            // if (!email || !clientPassword) {
+            //     throw error;
+            // }
 
             try {
                 UserLoginDTO.parse({ email, password: clientPassword });
-            } catch (error) {}
+            } catch (err) {
+                error.message = (err as ZodError).message; //.errors[0].message;
+                throw error;
+            }
 
             const user = await this.repoUsers.getByEmail(email);
             if (user === null) {
@@ -59,6 +63,7 @@ export class UsersController {
             // user.password; // base de datos -> encriptado
 
             const { password: hashedPassword, ...userWithoutPasswd } = user;
+
             const isValid = await AuthService.comparePassword(
                 clientPassword,
                 hashedPassword,
@@ -66,7 +71,19 @@ export class UsersController {
             if (!isValid) {
                 throw error;
             }
-            res.json(this.makeResponse([userWithoutPasswd]));
+
+            const token = await AuthService.generateToken({
+                id: userWithoutPasswd.id,
+                email: userWithoutPasswd.email,
+            });
+
+            const response = {
+                ...userWithoutPasswd,
+                token,
+            };
+
+            res.cookie('token', token);
+            res.json(this.makeResponse([response]));
         } catch (error) {
             next(error);
         }

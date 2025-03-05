@@ -1,10 +1,11 @@
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { Film } from '@prisma/client';
 import { Repository } from '../models/repository.type.js';
 import { AppResponse } from '../types/app-response';
 import createDebug from 'debug';
+import { FilmCreateDTO } from '../dto/films.dto.js';
 
-const debug = createDebug('films:controller:films');
+const debug = createDebug('films:controllers:films');
 
 export class FilmsController {
     constructor(private repoFilms: Repository<Film>) {
@@ -15,72 +16,62 @@ export class FilmsController {
         const data: AppResponse<Film> = {
             results,
             error: '',
-            a,
         };
         return data;
     }
 
     getAll = async (req: Request, res: Response, next: NextFunction) => {
+        debug('getAll');
         try {
             const films = await this.repoFilms.read();
-            // const data: AppResponse<Film> = {
-            //     results: films,
-            //     error: '',
-            // };
             res.json(this.makeResponse(films));
         } catch (error) {
             next(error);
         }
     };
-    getbyID = async (req: Request, res: Response, next: NextFunction) => {
+
+    getById = async (req: Request, res: Response, next: NextFunction) => {
+        debug('getById');
         try {
             const { id } = req.params;
             const film = await this.repoFilms.readById(id);
-            // const data: AppResponse<Film> = {
-            //     results: [film],
-            //     error: '',
-            // };
             res.json(this.makeResponse([film]));
         } catch (error) {
             next(error);
         }
     };
+
     create = async (req: Request, res: Response, next: NextFunction) => {
-        const newData = req.body;
+        debug('create');
         try {
+            FilmCreateDTO.parse(req.body);
+
+            const newData: FilmCreateDTO = req.body;
             const film = await this.repoFilms.create(newData);
-            // const data: AppResponse<Film> = {
-            //     results: [film],
-            //     error: '',
-            // };
             res.json(this.makeResponse([film]));
         } catch (error) {
             next(error);
         }
     };
+
     update = async (req: Request, res: Response, next: NextFunction) => {
+        debug('update');
         try {
             const { id } = req.params;
             const newData = req.body;
-
+            FilmCreateDTO.partial().parse(req.body);
             const film = await this.repoFilms.update(id, newData);
-            // const data: AppResponse<Film> = {
-            //     results: [film],
-            //     error: '',
-            // };
             res.json(this.makeResponse([film]));
         } catch (error) {
             next(error);
         }
     };
+
     delete = async (req: Request, res: Response, next: NextFunction) => {
+        debug('delete');
         try {
             const { id } = req.params;
             const film = await this.repoFilms.delete(id);
-            // const data: AppResponse<Film> = {
-            //     results: [film],
-            //     error: '',
-            // };
             res.json(this.makeResponse([film]));
         } catch (error) {
             next(error);

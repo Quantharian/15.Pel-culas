@@ -3,7 +3,11 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 
 const SALTS = 10;
 
-interface Payload extends JwtPayload {}
+interface Payload extends JwtPayload {
+    id: string;
+    email: string;
+    // role: string;
+}
 
 export class AuthService {
     static async hashPassword(password: string): Promise<string> {
@@ -16,15 +20,18 @@ export class AuthService {
     ): Promise<boolean> {
         return compare(password, hash);
     }
+
     static async generateToken(payload: Payload) {
-        const secret = process.env.JWT_SECRET_KEY as string;
+        const secret = process.env.JWT_SECRET as string;
         return jwt.sign(payload, secret);
     }
+
     static async verifyToken(token: string) {
-        const secret = process.env.JWT_SECRET_KEY as string;
+        const secret = process.env.JWT_SECRET as string;
         const result = jwt.verify(token, secret);
         if (typeof result === 'string') {
             throw new Error('Token no válido');
         }
+        return result as Payload;
     }
 }

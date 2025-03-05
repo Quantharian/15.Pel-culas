@@ -4,7 +4,7 @@ import { UsersController } from '../controllers/users.controller';
 const debug = createDebug('films:router:users');
 
 export const createUsersRouter = (usersController: UsersController) => {
-    debug('Ejecutando createUsersRouter');
+    debug('Ejecutando createFilmsRouter');
     const usersRouter = Router();
     //usersRouter.get('/', usersController.getAll);
     //usersRouter.get('/:id', usersController.getById);
