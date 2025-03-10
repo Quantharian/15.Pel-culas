@@ -1,6 +1,6 @@
 import createDebug from 'debug';
 import { Server } from 'node:http';
-const debug = createDebug('films:server:listening');
+const debug = createDebug('movies:server:listening');
 
 export const listenManager = (server: Server) => {
     const addr = server.address();

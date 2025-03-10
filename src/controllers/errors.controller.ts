@@ -9,7 +9,7 @@ import {
 import { ZodError } from 'zod';
 // import { ErrorPage } from '../views/pages/error-page.js';
 
-const debug = createDebug('films:errorManager');
+const debug = createDebug('movies:errorManager');
 
 export const errorManager = (
     err: HttpError | Error,

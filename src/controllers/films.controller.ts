@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
 import { Film } from '@prisma/client';
-import { Repository } from '../models/repository.type.js';
+import { Repository } from '../repo/repository.type.js';
 import { AppResponse } from '../types/app-response';
 import createDebug from 'debug';
 import { FilmCreateDTO } from '../dto/films.dto.js';
 
-const debug = createDebug('films:controllers:films');
+const debug = createDebug('movies:controller:films');
 
 export class FilmsController {
     constructor(private repoFilms: Repository<Film>) {
@@ -20,7 +20,7 @@ export class FilmsController {
         return data;
     }
 
-    getAll = async (req: Request, res: Response, next: NextFunction) => {
+    getAll = async (_req: Request, res: Response, next: NextFunction) => {
         debug('getAll');
         try {
             const films = await this.repoFilms.read();
@@ -61,6 +61,21 @@ export class FilmsController {
             const newData = req.body;
             FilmCreateDTO.partial().parse(req.body);
             const film = await this.repoFilms.update(id, newData);
+            res.json(this.makeResponse([film]));
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    toggleCategory = async (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ) => {
+        debug('setCategory');
+        try {
+            const { id, name: category } = req.params;
+            const film = await this.repoFilms.update(id, { category });
             res.json(this.makeResponse([film]));
         } catch (error) {
             next(error);

@@ -1,6 +1,7 @@
-// import { HttpError } from './http-error';
+//import { HttpError } from './http-error';
 
-//Opción mas informativa respecto a los errores de cara al cliente de la API
+// Opción mas informativ respecto a los errores
+// de cara al cliente de la PAI
 
 // export type AppResponse<T> = {
 //     results: T[];

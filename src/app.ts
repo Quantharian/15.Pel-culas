@@ -11,20 +11,30 @@ import {
     notMethodController,
 } from './controllers/base.controller.js';
 import { errorManager } from './controllers/errors.controller.js';
-import { createFilmsRouter } from './routers/films.router.js';
-import { createUsersRouter } from './routers/users.router.js';
-import type { Repository } from './models/repository.type.js';
-import { UsersRepo } from './models/users.repository.js';
-import { FilmRepo } from './models/films.repository.js';
+import { createFilmsRouter } from './router/films.router.js';
+import { createUsersRouter } from './router/users.router.js';
+import type { Repository } from './repo/repository.type.js';
+import { UsersRepo } from './repo/users.repository.js';
+import { FilmRepo } from './repo/films.repository.js';
 import { FilmsController } from './controllers/films.controller.js';
 import { UsersController } from './controllers/users.controller.js';
 import { AuthInterceptor } from './middleware/auth.interceptor.js';
+import { Payload } from './services/auth.service.js';
+import { ReviewsController } from './controllers/reviews.controller.js';
+import { ReviewRepo } from './repo/reviews.repository.js';
+import { createReviewsRouter } from './router/reviews.router.js';
+import { createCategoriesRouter } from './router/categories.router.js';
+import { CategoriesController } from './controllers/categories.controller.js';
+import { CategoryRepo } from './repo/categories.repository.js';
 
-// import { createProductsRouter } from './routers/products.router.js';
-// import { HomePage } from './views/pages/home-page.js';
-
-const debug = createDebug('films:app');
+const debug = createDebug('movies:app');
 debug('Loaded module');
+
+declare module 'express' {
+    interface Request {
+        user?: Payload;
+    }
+}
 
 export const createApp = () => {
     debug('Iniciando App...');
@@ -47,18 +57,35 @@ export const createApp = () => {
     app.use(debugLogger('debug-logger'));
     app.use(express.static(publicPath));
 
-    const authInterceptor = new AuthInterceptor();
-    const repoFilms: Repository<Film> = new FilmRepo();
-    const filmsController = new FilmsController(repoFilms);
+    // Controllers, Repositories... instances
 
+    const filmsRepo: Repository<Film> = new FilmRepo();
+    const usersRepo = new UsersRepo();
+    const reviewsRepo: ReviewRepo = new ReviewRepo();
+    const categoryRepo = new CategoryRepo();
+
+    const authInterceptor = new AuthInterceptor(reviewsRepo);
+    const filmsController = new FilmsController(filmsRepo);
+    const usersController = new UsersController(usersRepo);
+    const reviewsController = new ReviewsController(reviewsRepo);
+    const categoriesController = new CategoriesController(categoryRepo);
     const filmsRouter = createFilmsRouter(authInterceptor, filmsController);
-    const repoUsers = new UsersRepo();
-    const usersController = new UsersController(repoUsers);
-    const usersRouter = createUsersRouter(usersController);
+    const usersRouter = createUsersRouter(authInterceptor, usersController);
+    const reviewsRouter = createReviewsRouter(
+        authInterceptor,
+        reviewsController,
+    );
+
+    const categoriesRouter = createCategoriesRouter(
+        authInterceptor,
+        categoriesController,
+    );
 
     // Routes registry
     app.use('/api/films', filmsRouter);
     app.use('/api/users', usersRouter);
+    app.use('/api/reviews', reviewsRouter);
+    app.use('/api/categories', categoriesRouter);
 
     app.get('*', notFoundController); // 404
     app.use('*', notMethodController); // 405

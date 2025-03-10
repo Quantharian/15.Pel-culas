@@ -4,7 +4,7 @@ import { listenManager } from './server/listen-manager.js';
 import { errorManager } from './server/error-manager.js';
 import { createApp } from './app.js';
 
-const debug = createDebug('films:server');
+const debug = createDebug('movies:server');
 debug('Iniciando servidor...');
 const PORT = process.env.PORT || 3000;
 

@@ -1,7 +1,7 @@
 import type { ServerResponse } from 'node:http';
 import { HttpError } from '../types/http-error.js';
 import createDebug from 'debug';
-const debug = createDebug('films:server:errors');
+const debug = createDebug('movies:server:errors');
 
 export const errorManager = (
     error: Error | HttpError,

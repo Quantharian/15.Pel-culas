@@ -7,7 +7,7 @@ export const notFoundController = (
     _res: Response,
     next: NextFunction,
 ) => {
-    const debug = createDebug('films:notFoundController');
+    const debug = createDebug('movies:notFoundController');
     debug('Petición recibida');
 
     const message = `Page ${req.url} not found`;
@@ -20,7 +20,7 @@ export const notMethodController = (
     _res: Response,
     next: NextFunction,
 ) => {
-    const debug = createDebug('films:notMethodController');
+    const debug = createDebug('movies:notMethodController');
     debug('Petición recibida');
 
     const message = `Method ${req.method}  not allowed`;

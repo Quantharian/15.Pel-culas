@@ -6,6 +6,7 @@ CREATE TABLE `films` (
     `release_year` INTEGER NOT NULL,
     `rating` DOUBLE NOT NULL,
     `director` VARCHAR(191) NOT NULL,
+    `duration` INTEGER NOT NULL,
     `poster` VARCHAR(191) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
