@@ -16,7 +16,7 @@ export const FilmCreateDTO = z
         poster: z.string().url(),
         categories: z.array(z.string()).optional(),
     })
-    .strict(); //satisfies z.Schema<Prisma.FilmCreateInput>;
+    .strict(); // satisfies z.Schema<Prisma.FilmCreateInput>;
 
 // extract the inferred type
 export type FilmCreateDTO = z.infer<typeof FilmCreateDTO>;

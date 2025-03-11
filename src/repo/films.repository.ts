@@ -55,10 +55,10 @@ export class FilmRepo implements Repository<Film> {
             categories: {
                 // create: categories?.map((name) => ({ name })),
                 connect: categories?.map((name) => ({ name })),
-                // connectOrCreate: categories?.map((name)=> ({
-                //     where: {name},
-                //     create: {name}
-                // }))
+                // connectOrCreate: categories?.map((name) => ({
+                //     where: { name },
+                //     create: { name },
+                // })),
             },
         };
 
@@ -82,6 +82,42 @@ export class FilmRepo implements Repository<Film> {
         const film = await this.prisma.film.update({
             where: { id },
             data,
+        });
+
+        return film;
+    }
+
+    async toggleCategory(id: string, name: string): Promise<Film> {
+        const { categories } = await this.prisma.film.findUniqueOrThrow({
+            where: { id },
+            select: {
+                categories: {
+                    select: { name: true },
+                },
+            },
+        });
+
+        const hasCategory = categories.map((item) => item.name).includes(name);
+
+        debug('Toggling category for film with id:', id);
+        const film = await this.prisma.film.update({
+            where: { id },
+            data: {
+                categories: hasCategory?{
+                    disconnect
+                }
+                    connect: {
+                        id: catID.id,
+                    },
+                },
+            },
+            include: {
+                categories: {
+                    select: {
+                        name: true,
+                    },
+                },
+            },
         });
 
         return film;

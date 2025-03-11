@@ -24,7 +24,6 @@ model Film {
   poster      String
   createdAt   DateTime @default(now()) @ignore
   updatedAt   DateTime @updatedAt @ignore
-  
 
   categories Category[]
 

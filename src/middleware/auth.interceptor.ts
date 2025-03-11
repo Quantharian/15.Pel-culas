@@ -71,9 +71,28 @@ export class AuthInterceptor {
         };
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isUser = (req: Request, _res: Response, next: NextFunction) => {
         debug('isUser');
+        if (!req.user) {
+            const newError = new HttpError(
+                'You do not have permission',
+                403,
+                'Forbidden',
+            );
+            next(newError);
+            return;
+        }
+
+        // Item -> req.params.id
+        const { id: userId } = req.params;
+        // User -> req.user.id
+        const { id: userIdLogged } = req.user;
+
+        if (userId === userIdLogged || req.user.role === Role.ADMIN) {
+            next();
+        } else {
+            next(new HttpError('You do not have permission', 403, 'Forbidden'));
+        }
     };
 
     isOwnerReview = async (

@@ -1,14 +1,14 @@
 import { NextFunction, Request, Response } from 'express';
 import { Film } from '@prisma/client';
-import { Repository } from '../repo/repository.type.js';
 import { AppResponse } from '../types/app-response';
 import createDebug from 'debug';
 import { FilmCreateDTO } from '../dto/films.dto.js';
+import { FilmRepo } from '../repo/films.repository.js';
 
 const debug = createDebug('movies:controller:films');
 
 export class FilmsController {
-    constructor(private repoFilms: Repository<Film>) {
+    constructor(private repoFilms: FilmRepo) {
         debug('Instanciando');
     }
 
@@ -75,7 +75,8 @@ export class FilmsController {
         debug('setCategory');
         try {
             const { id, name: category } = req.params;
-            const film = await this.repoFilms.update(id, { category });
+            console.log(id, category);
+            const film = await this.repoFilms.toggleCategory(id, category);
             res.json(this.makeResponse([film]));
         } catch (error) {
             next(error);

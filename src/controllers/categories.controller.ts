@@ -3,7 +3,7 @@ import { Category } from '@prisma/client';
 import { Repository } from '../repo/repository.type.js';
 import { AppResponse } from '../types/app-response';
 import createDebug from 'debug';
-// import { FilmCreateDTO } from '../dto/films.dto.js';
+// import { FilmCreateDTO } from '../dto/categories.dto.js';
 
 const debug = createDebug('movies:controller:categories');
 
