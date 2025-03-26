@@ -17,13 +17,14 @@ import { FilmRepo } from './repo/films.repository.js';
 import { FilmsController } from './controllers/films.controller.js';
 import { UsersController } from './controllers/users.controller.js';
 import { AuthInterceptor } from './middleware/auth.interceptor.js';
-import { Payload } from './services/auth.service.js';
+import { Payload } from './server/auth.service.js';
 import { ReviewsController } from './controllers/reviews.controller.js';
 import { ReviewRepo } from './repo/reviews.repository.js';
 import { createReviewsRouter } from './router/reviews.router.js';
 import { CategoryRepo } from './repo/categories.repository.js';
 import { CategoriesController } from './controllers/categories.controller.js';
 import { createCategoriesRouter } from './router/categories.router.js';
+import { PrismaClient } from '@prisma/client';
 
 const debug = createDebug('movies:app');
 debug('Loaded module');
@@ -57,10 +58,11 @@ export const createApp = () => {
 
     // Controllers, Repositories... instances
 
-    const filmsRepo = new FilmRepo();
-    const usersRepo = new UsersRepo();
-    const reviewsRepo: ReviewRepo = new ReviewRepo();
-    const categoriesRepo = new CategoryRepo();
+    const prisma = new PrismaClient();
+    const filmsRepo = new FilmRepo(prisma);
+    const usersRepo = new UsersRepo(prisma);
+    const reviewsRepo: ReviewRepo = new ReviewRepo(prisma);
+    const categoriesRepo = new CategoryRepo(prisma);
 
     const authInterceptor = new AuthInterceptor(reviewsRepo);
     const filmsController = new FilmsController(filmsRepo);

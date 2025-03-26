@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { AuthService } from '../services/auth.service.js';
+import { AuthService } from '../server/auth.service.js';
 import { HttpError } from '../types/http-error.js';
 import createDebug from 'debug';
 import { Role } from '@prisma/client';
