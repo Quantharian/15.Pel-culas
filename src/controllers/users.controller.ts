@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import createDebug from 'debug';
 import type { AppResponse } from '../types/app-response';
 import { UsersRepo, UserWithoutPasswd } from '../repo/users.repository.js';
-import { AuthService } from '../server/auth.service.js';
+import { AuthService } from '../services/auth.service.js';
 import { HttpError } from '../types/http-error.js';
 import { UserCreateDTO, UserLoginDTO } from '../dto/users.dto.js';
 import { ZodError } from 'zod';

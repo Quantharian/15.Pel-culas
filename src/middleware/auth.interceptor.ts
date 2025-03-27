@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { AuthService } from '../server/auth.service.js';
+import { AuthService } from '../services/auth.service.js';
 import { HttpError } from '../types/http-error.js';
 import createDebug from 'debug';
 import { Role } from '@prisma/client';
@@ -10,6 +10,8 @@ const debug = createDebug('movies:interceptor:auth');
 
 export class AuthInterceptor {
     constructor(private repoReviews: ReviewRepo) {
+        console.log('createDebug', createDebug);
+        console.log('mi variable debug', debug);
         debug('Instanciando');
     }
 
