@@ -37,6 +37,7 @@ export class FilmsController {
             const film = await this.repoFilms.readById(id);
             res.json(this.makeResponse([film]));
         } catch (error) {
+            console.log(error);
             next(error);
         }
     };

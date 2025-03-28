@@ -10,18 +10,13 @@ vi.mock('bcryptjs', () => ({
 
 vi.mock('jsonwebtoken');
 
-const token = 'Este es el token';
-const payload = {
-    id: 'id',
-    email: 'email',
-    role: 'role',
-};
-
 describe('Given the class AuthService', () => {
-    // const jwt = {
-    //     sign: vi.fn(),
-    //     verify: vi.fn(),
-    // };
+    const token = 'Este es el token';
+    const payload = {
+        id: 'id',
+        email: 'email',
+        role: 'role',
+    };
 
     describe('When hashPassword is called', () => {
         test('Then it should call hash from bcrypt', async () => {
@@ -46,10 +41,9 @@ describe('Given the class AuthService', () => {
             expect(result).toBe(true);
         });
     });
-    describe('When generateToken is called', () => {
+    describe('When generateToken is called', async () => {
         test('Then it should call jwt.sign for generate a token', async () => {
             // Arrange
-
             // jwt.sign = vi.fn().mockReturnValue(token);
             (jwt.sign as Mock).mockReturnValue(token);
             // Act
@@ -67,7 +61,7 @@ describe('Given the class AuthService', () => {
             // Arrange
             (jwt.verify as Mock).mockReturnValue(payload);
             // Act
-            const result = AuthService.verifyToken(token);
+            const result = await AuthService.verifyToken(token);
             // Assert
             expect(jwt.verify).toHaveBeenCalledWith(
                 token,
@@ -75,16 +69,16 @@ describe('Given the class AuthService', () => {
             );
             expect(result).toEqual(payload);
         });
-
-        test('Then it should verify a valid token', async () => {
+        test('Then it should verify a invalid token', async () => {
             // Arrange
-            (jwt.verify as Mock).mockReturnValue('No soy un token válido');
-            // Act
-            // Assert
-            expect(AuthService.verifyToken(token)).rejects.toThrowError(
+            (jwt.verify as Mock).mockReturnValue('NO Soy un token');
+            // Act y Assert
+            // Funciones sincrónicas que lanzan un error
+            // expect(() => AuthService.verifyTokenSync(token)).toThrowError();
+            // Funciones asíncronas que 'reject' un error
+            await expect(AuthService.verifyToken(token)).rejects.toThrowError(
                 'Token no válido',
             );
-
             expect(jwt.verify).toHaveBeenCalledWith(
                 token,
                 process.env.JWT_SECRET as string,
